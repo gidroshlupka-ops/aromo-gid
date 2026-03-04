@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Phone, 
@@ -11,7 +11,8 @@ import {
   ShieldCheck, 
   Clock, 
   Tag,
-  Menu
+  Menu,
+  RotateCw
 } from 'lucide-react';
 
 // --- Types ---
@@ -25,65 +26,139 @@ interface Perfume {
 
 // --- Data ---
 const PERFUMES: Perfume[] = [
-  { id: 1, name: "Episode 23", description: "парфюмерная вода - Коллекция ароматов Ciel / Creed Aventus", gender: "для него", volume: "55мл" },
-  { id: 2, name: "Demi-Lune Terra", description: "парфюмерная вода для мужчин - Коллекция ароматов Ciel / Terre d'Hermes Hermès", gender: "для него", volume: "90мл" },
-  { id: 3, name: "White Flowers & Honey Intense", description: "парфюмерная вода - Aromapolis Olfactive Studio / Chanel Chance Eau Tendre", gender: "для неё", volume: "50мл" },
-  { id: 4, name: "Golden Amber & Midnight Saffron", description: "парфюмерная вода - Aromapolis Olfactive Studio / Maison Francis Kurkdjian Baccarat Rouge 540", gender: "для неё", volume: "50мл, 20мл" },
-  { id: 5, name: "Masala tea & Tobacco", description: "парфюмерная вода (Чай масала и Табак), Aromapolis Olfactive Studio / Tom Ford Tobacco Vanille", gender: "унисекс", volume: "50мл, 20мл" },
-  { id: 6, name: "Demi-Lune Aqua", description: "парфюмерная вода для мужчин - Коллекция ароматов Ciel / Acqua di Gio Giorgio Armani", gender: "для него", volume: "90мл" },
-  { id: 7, name: "Nuage Gardenia", description: "парфюмерная вода - Коллекция ароматов Ciel / Gucci Bloom", gender: "для неё", volume: "55мл" },
-  { id: 8, name: "Episode 21", description: "парфюмерная вода - Коллекция ароматов Ciel / Delina от Parfums de Marly", gender: "для неё", volume: "55мл" },
-  { id: 9, name: "Episode 28", description: "парфюмерная вода - Коллекция ароматов Ciel / Musc Noir For Her Narciso Rodriguez", gender: "для неё", volume: "55мл" },
-  { id: 10, name: "Demi-Lune № 04", description: "парфюмерная вода для мужчин - Коллекция ароматов Ciel / Egoiste Platinum от Chanel", gender: "для него", volume: "90мл" },
-  { id: 11, name: "FLUIDES White Flowers & Cedarwood", description: "парфюмерная вода, 20 мл - Коллекция ароматов Ciel / Christian Dior J'adore Infinissime", gender: "для неё", volume: "20мл" },
-  { id: 12, name: "Arc-en-Ciel Ice Dance", description: "парфюмерная вода, 20 мл - Коллекция ароматов Ciel / Dolce & Gabbana Light Blue", gender: "для неё", volume: "20мл" },
-  { id: 13, name: "Arc-en-Ciel", description: "парфюмерная вода, 20 мл - Коллекция ароматов Ciel / L’Imperatrice от Dolce & Gabbana", gender: "для неё", volume: "20мл" },
-  { id: 14, name: "Pink Rose & Sea Salt", description: "парфюмерная вода, Aromapolis Olfactive Studio / Jo Malone Wood Sage & Sea Salt", gender: "для неё", volume: "50мл, 20мл" },
-  { id: 15, name: "Nuage Neroli", description: "парфюмерная вода - Коллекция ароматов Ciel / Neroli Portofino Tom Ford", gender: "для неё, унисекс", volume: "55мл" },
-  { id: 16, name: "White Rose & Musk", description: "парфюмерная вода, Aromapolis Olfactive Studio / Chloe Eau De Parfum", gender: "для неё", volume: "50мл, 20мл" },
-  { id: 17, name: "L’essence d’Altai", description: "духи-концентрат - Aromapolis Olfactive Studio / Amouage Love Tuberose", gender: "для неё", volume: "50мл, 20мл" },
-  { id: 18, name: "Golden Violet & Amber Absolu", description: "парфюмерная вода - Aromapolis Olfactive Studio / Guerlain Insolence Eau De Parfum", gender: "для неё", volume: "50мл" },
-  { id: 19, name: "Episode 26", description: "парфюмерная вода - Коллекция ароматов Ciel / Gypsy Water Byredo", gender: "унисекс", volume: "55мл" },
-  { id: 20, name: "Red Rose & Oud", description: "парфюмерная вода, Aromapolis Olfactive Studio / Maison Francis Kurkdjian Oud Satin Mood", gender: "унисекс", volume: "50мл, 20мл" },
-  { id: 21, name: "Silver Wood & Oakmoss", description: "парфюмерная вода - Aromapolis Olfactive Studio / Hermes Terre D'Hermes Eau Intense Vetiver", gender: "для него", volume: "50мл" },
-  { id: 22, name: "Episode 25", description: "парфюмерная вода - Коллекция ароматов Ciel / Ganymede by Marc-Antoine Barrois", gender: "унисекс", volume: "55мл" },
-  { id: 23, name: "FLUIDES Black Cherry & Tonka Beans", description: "парфюмерная вода, 20 мл - Коллекция ароматов Ciel / Yves Saint Laurent Manifesto", gender: "для неё, унисекс", volume: "20мл" },
-  { id: 24, name: "Episode 27", description: "парфюмерная вода - Коллекция ароматов Ciel / A La Rose Maison Francis Kurkdjian", gender: "для неё", volume: "55мл" },
-  { id: 25, name: "Demi-Lune Ignis", description: "парфюмерная вода для мужчин - Коллекция ароматов Ciel / Boss Bottled от Hugo Boss", gender: "для него", volume: "90мл" },
-  { id: 26, name: "L’essence de Taiga", description: "духи-концентрат - Aromapolis Olfactive Studio / Christian Dior Sauvage Elixir", gender: "для него, унисекс", volume: "50мл, 20мл" },
-  { id: 27, name: "Demon du Ciel", description: "парфюмерная вода для женщин, 20 мл - Коллекция ароматов Ciel / Givenchy Ange Ou Demon", gender: "для неё", volume: "20мл" },
-  { id: 28, name: "Neroli Tea & Bergamot", description: "парфюмерная вода (Чай нероли и Бергамот), Aromapolis Olfactive Studio / Guerlain Aqua Allegoria Forte Nerolia Vetiver", gender: "унисекс", volume: "50мл" },
-  { id: 29, name: "White Tea & Mimosa", description: "парфюмерная вода (Белый чай и Мимоза), Aromapolis Olfactive Studio / Elizabeth Arden White Tea", gender: "для неё", volume: "50мл" },
-  { id: 30, name: "Lady Vogue Soul", description: "парфюмерная вода, 20 мл - Коллекция ароматов Ciel / Ex Nihilo Fleur Narcotique", gender: "для неё", volume: "20мл" },
-  { id: 31, name: "Orange Rose & Vanilla", description: "парфюмерная вода, - Aromapolis Olfactive Studio / Lancome Idole Nectar", gender: "для неё, унисекс", volume: "50мл, 20мл" },
-  { id: 32, name: "Blue Matcha & Vetiver", description: "парфюмерная вода (Голубая матча и Ветивер), Aromapolis Olfactive Studio / Acqua di Parma Yuzu", gender: "для неё, унисекс", volume: "50мл" },
-  { id: 33, name: "Nuage Peony", description: "парфюмерная вода - Коллекция ароматов Ciel / Miss Dior Blooming Bouquet", gender: "для неё", volume: "55мл" },
-  { id: 34, name: "Arc-en-Ciel White", description: "парфюмерная вода, 20 мл - Коллекция ароматов Ciel / Mojave Ghost от Byredo", gender: "для неё", volume: "20мл" },
-  { id: 35, name: "Demi-Lune Aer", description: "парфюмерная вода для мужчин - Коллекция ароматов Ciel / H24 Hermès", gender: "для него", volume: "90мл" },
-  { id: 36, name: "Episode 02", description: "парфюмерная вода - Коллекция ароматов Ciel / Molecule 02 от Escentric Molecules", gender: "унисекс", volume: "55мл" },
-  { id: 37, name: "Arc-en-Ciel Red", description: "парфюмерная вода, 20 мл - Коллекция ароматов Ciel / Good Girl Midnight Carolina Herrera", gender: "для неё", volume: "20мл" },
-  { id: 38, name: "Nuage Osmanthus", description: "парфюмерная вода - Коллекция ароматов Ciel / Good Girl Gone Bad By Kilian", gender: "для неё", volume: "55мл" },
-  { id: 39, name: "Dark Vanilla & Cherry Blossom", description: "парфюмерная вода - Aromapolis Olfactive Studio / HUDA BEAUTY KAYALI Vanilla 28", gender: "для неё", volume: "50мл, 20мл" },
-  { id: 40, name: "Arc-en-Ciel Pink", description: "парфюмерная вода, 20 мл - Коллекция ароматов Ciel / Pink Roses от Mancera", gender: "для неё", volume: "20мл" },
-  { id: 41, name: "Lady Vogue Dream", description: "парфюмерная вода, 20 мл - Коллекция ароматов Ciel / Zadig & Voltaire This Is Love! For Her", gender: "для неё", volume: "20мл" },
-  { id: 42, name: "Neon Rose & Davana", description: "парфюмерная вода, Aromapolis Olfactive Studio / Byredo La Tulipe", gender: "для неё, унисекс", volume: "50мл, 20мл" },
-  { id: 43, name: "Nuage Freesia", description: "парфюмерная вода - Коллекция ароматов Ciel / Nomade Chloé", gender: "для неё", volume: "55мл" },
-  { id: 44, name: "Tea Blossom & Candy", description: "парфюмерная вода (Цветущий чай и леденцы), Aromapolis Olfactive Studio / Lolita Lempicka Le Parfum", gender: "для неё", volume: "50мл" },
-  { id: 45, name: "Wild Raspberry & Bitter Orange", description: "туалетная вода - Aromapolis Olfactive Studio / Woody Raspberry Dossier", gender: "для неё", volume: "50мл" },
-  { id: 46, name: "Absolute Ego", description: "парфюмерная вода для мужчин, 20 мл - Коллекция ароматов Ciel / Lacoste L.12.12. Blanc", gender: "для него", volume: "20мл" },
-  { id: 47, name: "Nuage", description: "парфюмерная вода - Коллекция ароматов Ciel / Laсoste for femme от Laсoste", gender: "для неё", volume: "55мл" },
-  { id: 48, name: "Arc-en-Ciel Emerald", description: "парфюмерная вода, 20 мл - Коллекция ароматов Ciel / A Kiss From A Rose Kilian", gender: "для неё", volume: "20мл" },
-  { id: 49, name: "Arc-en-ciel Bloom", description: "парфюмерная вода, 20 мл - Коллекция ароматов Ciel / Eclat D'Arpege от Lanvin", gender: "для неё", volume: "20мл" },
-  { id: 50, name: "FLUIDES Glowing Citrus & Vetiver", description: "парфюмерная вода, 20 мл - Коллекция ароматов Ciel / Aqua Celestia Maison Francis Kurkdjian", gender: "для неё, унисекс", volume: "20мл" },
-  { id: 51, name: "Episode 30", description: "парфюмерная вода - Коллекция ароматов Ciel / PINK MOLÉCULE 090.09 by Zarkoperfume", gender: "для неё", volume: "55мл" },
-  { id: 52, name: "1 Primum", description: "духи-концентрат - Aromapolis Olfactive Studio", gender: "унисекс", volume: "50мл, 20мл" },
-  { id: 53, name: "6 Sextum", description: "духи-концентрат - Aromapolis Olfactive Studio", gender: "унисекс", volume: "50мл, 20мл" },
-  { id: 54, name: "9 Nonum", description: "духи-концентрат - Aromapolis Olfactive Studio", gender: "унисекс", volume: "50мл, 20мл" },
+  { id: 1, name: "Episode 23", description: "парфюмерная вода", gender: "для него", volume: "55мл" },
+  { id: 2, name: "Demi-Lune Terra", description: "парфюмерная вода", gender: "для него", volume: "90мл" },
+  { id: 3, name: "White Flowers & Honey Intense", description: "парфюмерная вода", gender: "для неё", volume: "50мл" },
+  { id: 4, name: "Golden Amber & Midnight Saffron", description: "парфюмерная вода", gender: "для неё", volume: "50мл, 20мл" },
+  { id: 5, name: "Masala tea & Tobacco", description: "парфюмерная вода", gender: "унисекс", volume: "50мл, 20мл" },
+  { id: 6, name: "Demi-Lune Aqua", description: "парфюмерная вода", gender: "для него", volume: "90мл" },
+  { id: 7, name: "Nuage Gardenia", description: "парфюмерная вода", gender: "для неё", volume: "55мл" },
+  { id: 8, name: "Episode 21", description: "парфюмерная вода", gender: "для неё", volume: "55мл" },
+  { id: 9, name: "Episode 28", description: "парфюмерная вода", gender: "для неё", volume: "55мл" },
+  { id: 10, name: "Demi-Lune № 04", description: "парфюмерная вода", gender: "для него", volume: "90мл" },
+  { id: 11, name: "FLUIDES White Flowers & Cedarwood", description: "парфюмерная вода", gender: "для неё", volume: "20мл" },
+  { id: 12, name: "Arc-en-Ciel Ice Dance", description: "парфюмерная вода", gender: "для неё", volume: "20мл" },
+  { id: 13, name: "Arc-en-Ciel", description: "парфюмерная вода", gender: "для неё", volume: "20мл" },
+  { id: 14, name: "Pink Rose & Sea Salt", description: "парфюмерная вода", gender: "для неё", volume: "50мл, 20мл" },
+  { id: 15, name: "Nuage Neroli", description: "парфюмерная вода", gender: "для неё, унисекс", volume: "55мл" },
+  { id: 16, name: "White Rose & Musk", description: "парфюмерная вода", gender: "для неё", volume: "50мл, 20мл" },
+  { id: 17, name: "L’essence d’Altai", description: "духи-концентрат", gender: "для неё", volume: "50мл, 20мл" },
+  { id: 18, name: "Golden Violet & Amber Absolu", description: "парфюмерная вода", gender: "для неё", volume: "50мл" },
+  { id: 19, name: "Episode 26", description: "парфюмерная вода", gender: "унисекс", volume: "55мл" },
+  { id: 20, name: "Red Rose & Oud", description: "парфюмерная вода", gender: "унисекс", volume: "50мл, 20мл" },
+  { id: 21, name: "Silver Wood & Oakmoss", description: "парфюмерная вода", gender: "для него", volume: "50мл" },
+  { id: 22, name: "Episode 25", description: "парфюмерная вода", gender: "унисекс", volume: "55мл" },
+  { id: 23, name: "FLUIDES Black Cherry & Tonka Beans", description: "парфюмерная вода", gender: "для неё, унисекс", volume: "20мл" },
+  { id: 24, name: "Episode 27", description: "парфюмерная вода", gender: "для неё", volume: "55мл" },
+  { id: 25, name: "Demi-Lune Ignis", description: "парфюмерная вода", gender: "для него", volume: "90мл" },
+  { id: 26, name: "L’essence de Taiga", description: "духи-концентрат", gender: "для него, унисекс", volume: "50мл, 20мл" },
+  { id: 27, name: "Demon du Ciel", description: "парфюмерная вода", gender: "для неё", volume: "20мл" },
+  { id: 28, name: "Neroli Tea & Bergamot", description: "парфюмерная вода", gender: "унисекс", volume: "50мл" },
+  { id: 29, name: "White Tea & Mimosa", description: "парфюмерная вода", gender: "для неё", volume: "50мл" },
+  { id: 30, name: "Lady Vogue Soul", description: "парфюмерная вода", gender: "для неё", volume: "20мл" },
+  { id: 31, name: "Orange Rose & Vanilla", description: "парфюмерная вода", gender: "для неё, унисекс", volume: "50мл, 20мл" },
+  { id: 32, name: "Blue Matcha & Vetiver", description: "парфюмерная вода", gender: "для неё, унисекс", volume: "50мл" },
+  { id: 33, name: "Nuage Peony", description: "парфюмерная вода", gender: "для неё", volume: "55мл" },
+  { id: 34, name: "Arc-en-Ciel White", description: "парфюмерная вода", gender: "для неё", volume: "20мл" },
+  { id: 35, name: "Demi-Lune Aer", description: "парфюмерная вода", gender: "для него", volume: "90мл" },
+  { id: 36, name: "Episode 02", description: "парфюмерная вода", gender: "унисекс", volume: "55мл" },
+  { id: 37, name: "Arc-en-Ciel Red", description: "парфюмерная вода", gender: "для неё", volume: "20мл" },
+  { id: 38, name: "Nuage Osmanthus", description: "парфюмерная вода", gender: "для неё", volume: "55мл" },
+  { id: 39, name: "Dark Vanilla & Cherry Blossom", description: "парфюмерная вода", gender: "для неё", volume: "50мл, 20мл" },
+  { id: 40, name: "Arc-en-Ciel Pink", description: "парфюмерная вода", gender: "для неё", volume: "20мл" },
+  { id: 41, name: "Lady Vogue Dream", description: "парфюмерная вода", gender: "для неё", volume: "20мл" },
+  { id: 42, name: "Neon Rose & Davana", description: "парфюмерная вода", gender: "для неё, унисекс", volume: "50мл, 20мл" },
+  { id: 43, name: "Nuage Freesia", description: "парфюмерная вода", gender: "для неё", volume: "55мл" },
+  { id: 44, name: "Tea Blossom & Candy", description: "парфюмерная вода", gender: "для неё", volume: "50мл" },
+  { id: 45, name: "Wild Raspberry & Bitter Orange", description: "туалетная вода", gender: "для неё", volume: "50мл" },
+  { id: 46, name: "Absolute Ego", description: "парфюмерная вода", gender: "для него", volume: "20мл" },
+  { id: 47, name: "Nuage", description: "парфюмерная вода", gender: "для неё", volume: "55мл" },
+  { id: 48, name: "Arc-en-Ciel Emerald", description: "парфюмерная вода", gender: "для неё", volume: "20мл" },
+  { id: 49, name: "Arc-en-ciel Bloom", description: "парфюмерная вода", gender: "для неё", volume: "20мл" },
+  { id: 50, name: "FLUIDES Glowing Citrus & Vetiver", description: "парфюмерная вода", gender: "для неё, унисекс", volume: "20мл" },
+  { id: 51, name: "Episode 30", description: "парфюмерная вода", gender: "для неё", volume: "55мл" },
+  { id: 52, name: "1 Primum", description: "духи-концентрат", gender: "унисекс", volume: "50мл, 20мл" },
+  { id: 53, name: "6 Sextum", description: "духи-концентрат", gender: "унисекс", volume: "50мл, 20мл" },
+  { id: 54, name: "9 Nonum", description: "духи-концентрат", gender: "унисекс", volume: "50мл, 20мл" },
 ];
 
 const REVIEWS = [3, 1, 6, 4, 8, 2, 7, 5]; // Shuffled 1-8
 
 // --- Components ---
+
+const FastScrollHandle = () => {
+  const [isDragging, setIsDragging] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isDragging) return;
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight <= 0) return;
+      setScrollProgress(window.scrollY / totalHeight);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isDragging]);
+
+  const handlePointerMove = (e: React.PointerEvent | PointerEvent) => {
+    if (!isDragging || !containerRef.current) return;
+    
+    const rect = containerRef.current.getBoundingClientRect();
+    const y = Math.max(0, Math.min(e.clientY - rect.top, rect.height));
+    const progress = y / rect.height;
+    
+    setScrollProgress(progress);
+    
+    const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+    window.scrollTo({
+      top: progress * totalHeight,
+      behavior: 'auto'
+    });
+  };
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    setIsDragging(true);
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    handlePointerMove(e);
+  };
+
+  const handlePointerUp = (e: React.PointerEvent) => {
+    setIsDragging(false);
+    (e.target as HTMLElement).releasePointerCapture(e.pointerId);
+  };
+
+  return (
+    <div 
+      ref={containerRef}
+      className="fixed right-0 top-16 bottom-16 w-8 z-[100] md:hidden flex flex-col items-center pointer-events-none"
+    >
+      <div className="relative w-full h-full flex justify-center">
+        {/* Track background for visibility */}
+        <div className="absolute w-0.5 h-full bg-stone-200/20 rounded-full" />
+        
+        <motion.div
+          className="absolute w-1.5 h-16 bg-amber-500/60 backdrop-blur-md rounded-full pointer-events-auto cursor-grab active:cursor-grabbing shadow-lg border border-white/20"
+          style={{ 
+            top: `${scrollProgress * 100}%`,
+            translateY: '-50%'
+          }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          animate={{
+            scaleX: isDragging ? 3 : 1,
+            scaleY: isDragging ? 1.5 : 1,
+            backgroundColor: isDragging ? 'rgba(245, 158, 11, 0.9)' : 'rgba(245, 158, 11, 0.6)',
+          }}
+          transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+        />
+      </div>
+    </div>
+  );
+};
 
 const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -110,7 +185,7 @@ const Navbar = () => {
           className="flex items-center gap-2 cursor-pointer group"
           onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         >
-          <img src="/logo.jpg" alt="Logo" className="h-10 w-10 rounded-full object-cover border border-stone-200 group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" />
+          <img src={`${import.meta.env.BASE_URL}logo.jpg`} alt="Logo" className="h-10 w-10 rounded-full object-cover border border-stone-200 group-hover:scale-105 transition-transform" referrerPolicy="no-referrer" />
           <span className="font-serif text-lg font-bold tracking-widest text-stone-800 hidden sm:block drop-shadow-sm">АРОМА ГИД</span>
         </div>
 
@@ -180,9 +255,9 @@ const Hero = () => {
     <section className="relative h-[85vh] min-h-[600px] flex items-center justify-center overflow-hidden">
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
-        style={{ backgroundImage: 'url("/background.jpg")', filter: 'blur(2px)' }}
+        style={{ backgroundImage: 'url("/background.jpg")', filter: 'blur(2px) brightness(1.15)' }}
       />
-      <div className="absolute inset-0 bg-stone-900/40" />
+      <div className="absolute inset-0 bg-stone-900/25" />
       
       <motion.div 
         initial={{ opacity: 0, y: 30 }}
@@ -191,21 +266,21 @@ const Hero = () => {
         className="relative z-10 text-center px-4 max-w-5xl"
       >
         <h1 
-          className="font-serif text-5xl md:text-7xl lg:text-8xl text-white font-black mb-8 tracking-tighter leading-[0.9]"
+          className="font-serif text-4xl md:text-7xl lg:text-8xl text-white font-black mb-8 tracking-tighter leading-[0.9]"
           style={{ 
             textShadow: '0 0 20px rgba(0,0,0,0.9), 0 0 10px rgba(0,0,0,0.9), 2px 2px 4px rgba(0,0,0,1), -2px -2px 4px rgba(0,0,0,1), 2px -2px 4px rgba(0,0,0,1), -2px 2px 4px rgba(0,0,0,1)' 
           }}
         >
           МИР ИЗЫСКАННЫХ <br /> АРОМАТОВ <br /> 
           <span 
-            className="text-amber-200 text-3xl md:text-5xl lg:text-6xl font-serif italic font-light tracking-normal block mt-4"
+            className="text-amber-200 text-2xl md:text-5xl lg:text-6xl font-serif italic font-light tracking-normal block mt-4"
             style={{ textShadow: '0 0 15px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,1), 1.5px 1.5px 3px rgba(0,0,0,1), -1.5px -1.5px 3px rgba(0,0,0,1), 1.5px -1.5px 3px rgba(0,0,0,1), -1.5px 1.5px 3px rgba(0,0,0,1)' }}
           >
             ОТ АРОМА ГИД
           </span>
         </h1>
         <p 
-          className="text-white text-lg md:text-2xl font-bold tracking-wide max-w-2xl mx-auto leading-relaxed"
+          className="text-white text-base md:text-2xl font-bold tracking-wide max-w-[280px] md:max-w-2xl mx-auto leading-relaxed"
           style={{ 
             textShadow: '0 0 12px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,1), 1.5px 1.5px 2px rgba(0,0,0,1), -1.5px -1.5px 2px rgba(0,0,0,1), 1.5px -1.5px 2px rgba(0,0,0,1), -1.5px 1.5px 2px rgba(0,0,0,1)' 
           }}
@@ -242,10 +317,10 @@ const Features = () => {
   ];
 
   return (
-    <section className="py-12 px-4 max-w-7xl mx-auto text-center">
-      <h2 className="font-serif text-3xl md:text-4xl text-stone-800 mb-12">Почему наши ароматы - ваш лучший выбор?</h2>
+    <section className="py-16 md:py-24 px-4 max-w-7xl mx-auto text-center">
+      <h2 className="font-serif text-4xl md:text-5xl lg:text-6xl text-stone-800 mb-12 md:mb-20 leading-tight">Почему наши ароматы - <br className="hidden md:block" /> ваш лучший выбор?</h2>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8 mb-16 md:mb-20">
         {features.map((f, i) => (
           <motion.div
             key={i}
@@ -253,113 +328,193 @@ const Features = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1 }}
-            className="p-8 rounded-3xl glass-card hover:translate-y-[-5px] transition-all duration-300"
+            className="p-8 md:p-10 rounded-[40px] bg-white/95 shadow-xl hover:translate-y-[-8px] transition-all duration-500 border border-stone-200 flex flex-col items-center"
           >
-            <div className="mb-4 flex justify-center">{f.icon}</div>
-            <h3 className="font-bold text-lg mb-3 text-stone-900">{f.title}</h3>
-            <p className="text-stone-600 text-sm leading-relaxed">{f.text}</p>
+            <div className="mb-6 flex justify-center scale-125 md:scale-150">{f.icon}</div>
+            <h3 className="font-black text-3xl md:text-2xl lg:text-3xl mb-4 text-stone-900 leading-tight tracking-tight">{f.title}</h3>
+            <p className="text-stone-800 text-xl md:text-xl lg:text-xl leading-relaxed font-bold">
+              {f.text}
+            </p>
           </motion.div>
         ))}
       </div>
       
-      <p className="text-stone-500 italic font-medium">Отличный шанс обрести роскошный парфюм без переплат!</p>
-      <div className="section-divider" />
+      <p className="text-stone-800 italic font-black text-2xl md:text-3xl px-4 leading-tight">
+        Отличный шанс обрести роскошный парфюм без переплат!
+      </p>
+      <div className="section-divider mt-16 md:mt-20" />
     </section>
   );
 };
 
 const Catalog = () => {
-  const [selectedImg, setSelectedImg] = useState<string | null>(null);
-  const [expandedId, setExpandedId] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+
+  const handleNext = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (selectedId === null) return;
+    const currentIndex = PERFUMES.findIndex(p => p.id === selectedId);
+    const nextIndex = (currentIndex + 1) % PERFUMES.length;
+    setSelectedId(PERFUMES[nextIndex].id);
+  };
+
+  const handlePrev = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (selectedId === null) return;
+    const currentIndex = PERFUMES.findIndex(p => p.id === selectedId);
+    const prevIndex = (currentIndex - 1 + PERFUMES.length) % PERFUMES.length;
+    setSelectedId(PERFUMES[prevIndex].id);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (selectedId === null) return;
+      if (e.key === 'ArrowRight') handleNext();
+      if (e.key === 'ArrowLeft') handlePrev();
+      if (e.key === 'Escape') setSelectedId(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedId]);
 
   return (
-    <section id="catalog" className="py-12 bg-stone-50/30">
+    <section id="catalog" className="py-16 md:py-24 bg-stone-50/30">
       <div className="max-w-7xl mx-auto px-4 text-center">
-        <h2 className="font-serif text-3xl md:text-4xl text-stone-800 mb-4">Наш каталог</h2>
-        <div className="w-20 h-1 bg-amber-200 mx-auto mb-12 rounded-full" />
+        <h2 className="font-serif text-4xl md:text-6xl text-stone-800 mb-4 font-black">Наш каталог</h2>
+        <div className="w-24 h-1.5 bg-amber-200 mx-auto mb-16 md:mb-24 rounded-full" />
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-2 md:gap-12">
           {PERFUMES.map((p) => (
             <motion.div 
               key={p.id}
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="group flex flex-col"
+              className="group flex flex-col bg-white rounded-2xl md:rounded-[32px] p-1.5 md:p-4 shadow-sm hover:shadow-xl transition-all duration-500 border border-stone-100"
             >
               <div 
-                className="aspect-[3/4] rounded-2xl overflow-hidden mb-3 cursor-pointer relative bg-stone-200"
-                onClick={() => setSelectedImg(`/${p.id}.jpg`)}
+                className="aspect-[3/4] rounded-xl md:rounded-2xl overflow-hidden mb-2 md:mb-6 cursor-pointer relative bg-stone-100"
+                onClick={() => setSelectedId(p.id)}
               >
                 <img 
-                  src={`/${p.id}.jpg`} 
+                  src={`${import.meta.env.BASE_URL}${p.id}.jpg`} 
                   alt={p.name} 
-                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   referrerPolicy="no-referrer"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors" />
               </div>
-              <div className="px-1 flex-grow flex flex-col">
-                <h4 className="font-bold text-stone-900 text-sm md:text-base leading-tight mb-1 line-clamp-2">{p.name}</h4>
-                
-                <div className="relative mb-2">
-                  <motion.p 
-                    initial={false}
-                    animate={{ height: expandedId === p.id ? 'auto' : '1.5rem' }}
-                    className={`text-stone-500 text-[10px] md:text-xs text-center overflow-hidden pr-4`}
-                  >
-                    {p.description}
-                  </motion.p>
-                  <button 
-                    onClick={() => setExpandedId(expandedId === p.id ? null : p.id)}
-                    className="absolute right-0 top-0 text-stone-400 hover:text-amber-600 transition-colors"
-                  >
-                    <motion.div
-                      animate={{ rotate: expandedId === p.id ? 180 : 0 }}
-                    >
-                      <ChevronRight size={14} className="rotate-90" />
-                    </motion.div>
-                  </button>
+
+              <div className="px-1 md:px-2 flex-grow flex flex-col text-left">
+                {/* Gender Badge */}
+                <div className="mb-1 md:mb-2">
+                  <span className={`text-[9px] md:text-sm font-black uppercase tracking-widest px-2 py-0.5 md:py-1 rounded-md ${
+                    p.gender.includes('него') ? 'bg-blue-50 text-blue-600' : 
+                    p.gender.includes('неё') ? 'bg-rose-50 text-rose-600' : 
+                    'bg-stone-100 text-stone-600'
+                  }`}>
+                    {p.gender}
+                  </span>
                 </div>
 
-                <div className="flex flex-wrap justify-center gap-2 mt-auto">
-                  <span className="text-[10px] font-bold uppercase tracking-tighter text-stone-400 bg-stone-100 px-2 py-0.5 rounded-full">{p.gender}</span>
-                  <span className="text-[10px] font-bold uppercase tracking-tighter text-amber-600 bg-amber-50 px-2 py-0.5 rounded-full">{p.volume}</span>
+                <h4 className="font-black text-stone-900 text-lg md:text-xl leading-tight mb-1 truncate" title={p.name}>
+                  {p.name}
+                </h4>
+                
+                <div className="mb-2 md:mb-4">
+                  <p className="text-stone-500 text-sm md:text-xl truncate font-medium">
+                    {p.description}
+                  </p>
+                </div>
+
+                <div className="pt-2 md:pt-4 border-t border-stone-50 mt-auto flex items-center justify-between">
+                  <span className="text-[9px] md:text-sm font-black uppercase tracking-widest text-stone-400">Объем</span>
+                  <div className="flex flex-wrap justify-end gap-1">
+                    {p.volume.split(',').map((v, idx) => (
+                      <span key={idx} className="text-[10px] md:text-lg font-black text-amber-700 bg-amber-50/50 border border-amber-100 px-1.5 py-0.5 md:px-3 md:py-1 rounded-md md:rounded-lg">
+                        {v.trim()}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
             </motion.div>
           ))}
         </div>
 
-        <div className="mt-12 text-stone-500 text-sm max-w-2xl mx-auto">
+        <div className="mt-24 p-10 bg-amber-50 rounded-[40px] border border-amber-100 text-stone-900 text-xl md:text-3xl max-w-5xl mx-auto font-semibold leading-relaxed shadow-sm">
           <p>
             Со всем каталогом с полным описанием ароматов можете ознакомится в нашем телеграмм боте, ссылка на бота-каталог в разделе "контакты".
           </p>
         </div>
-        <div className="section-divider" />
+        <div className="section-divider mt-24" />
       </div>
 
-      {/* Fullscreen Image Modal */}
+      {/* Fullscreen Image Modal with Navigation */}
       <AnimatePresence>
-        {selectedImg && (
+        {selectedId !== null && (
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4"
-            onClick={() => setSelectedImg(null)}
+            className="fixed inset-0 z-[100] bg-black/95 flex items-center justify-center"
+            onClick={() => setSelectedId(null)}
           >
-            <button className="absolute top-6 right-6 text-white p-2 hover:bg-white/10 rounded-full transition-colors">
+            {/* Close Button */}
+            <button className="absolute top-6 right-6 text-white p-3 hover:bg-white/10 rounded-full transition-colors z-[110]">
               <X size={32} />
             </button>
-            <motion.img 
-              initial={{ scale: 0.9 }}
-              animate={{ scale: 1 }}
-              src={selectedImg} 
-              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
-              referrerPolicy="no-referrer"
-            />
+
+            {/* Navigation Arrows (Desktop) */}
+            <button 
+              className="absolute left-4 md:left-8 text-white/50 hover:text-white p-4 transition-all hidden md:block z-[110]"
+              onClick={handlePrev}
+            >
+              <ChevronLeft size={64} strokeWidth={1} />
+            </button>
+            <button 
+              className="absolute right-4 md:right-8 text-white/50 hover:text-white p-4 transition-all hidden md:block z-[110]"
+              onClick={handleNext}
+            >
+              <ChevronRight size={64} strokeWidth={1} />
+            </button>
+
+            {/* Image Container with Swipe Support */}
+            <div className="relative w-full h-full flex items-center justify-center p-4 md:p-12 overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={selectedId}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x > 100) handlePrev();
+                    else if (info.offset.x < -100) handleNext();
+                  }}
+                  className="w-full h-full flex flex-col items-center justify-center gap-6"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <img 
+                    src={${import.meta.env.BASE_URL}${selectedId}.jpg}
+                    className="max-w-full max-h-[80vh] object-contain rounded-xl shadow-2xl pointer-events-none"
+                    referrerPolicy="no-referrer"
+                  />
+                  <div className="text-center">
+                    <h3 className="text-white font-black text-2xl md:text-4xl mb-2">
+                      {PERFUMES.find(p => p.id === selectedId)?.name}
+                    </h3>
+                    <p className="text-stone-400 text-sm md:text-lg uppercase tracking-[0.3em] font-bold">
+                      {PERFUMES.find(p => p.id === selectedId)?.gender} • {PERFUMES.find(p => p.id === selectedId)?.volume}
+                    </p>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -390,24 +545,35 @@ const Reviews = () => {
   const nextReview = () => setCurrentIndex((prev) => (prev + 1) % REVIEWS.length);
   const prevReview = () => setCurrentIndex((prev) => (prev - 1 + REVIEWS.length) % REVIEWS.length);
 
-  const nextFullscreen = (e: any) => {
-    e.stopPropagation();
+  const nextFullscreen = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     if (fullscreenIndex !== null) {
       setFullscreenIndex((fullscreenIndex + 1) % REVIEWS.length);
     }
   };
 
-  const prevFullscreen = (e: any) => {
-    e.stopPropagation();
+  const prevFullscreen = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     if (fullscreenIndex !== null) {
       setFullscreenIndex((fullscreenIndex - 1 + REVIEWS.length) % REVIEWS.length);
     }
   };
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (fullscreenIndex === null) return;
+      if (e.key === 'ArrowRight') nextFullscreen();
+      if (e.key === 'ArrowLeft') prevFullscreen();
+      if (e.key === 'Escape') setFullscreenIndex(null);
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [fullscreenIndex]);
+
   return (
-    <section id="reviews" className="py-12 overflow-hidden">
+    <section id="reviews" className="py-16 overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 text-center">
-        <h2 className="font-serif text-3xl md:text-4xl text-stone-800 mb-12">Отзывы наших клиентов</h2>
+        <h2 className="font-serif text-4xl md:text-5xl text-stone-800 mb-16">Отзывы наших клиентов</h2>
         
         <div className="relative max-w-3xl mx-auto">
           <div className="overflow-hidden rounded-3xl shadow-xl glass-card border-stone-200/30">
@@ -420,7 +586,7 @@ const Reviews = () => {
               {REVIEWS.map((id) => (
                 <div key={id} className="min-w-full aspect-[10/4] bg-white flex items-center justify-center">
                   <img 
-                    src={`/${id}otz.jpg`} 
+                    src={`${import.meta.env.BASE_URL}${id}otz.jpg`} 
                     alt={`Review ${id}`} 
                     className="w-full h-full object-contain md:object-cover"
                     referrerPolicy="no-referrer"
@@ -465,39 +631,65 @@ const Reviews = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[110] bg-black/95 flex items-center justify-center p-4"
+            className="fixed inset-0 z-[110] bg-black/95 flex items-center justify-center p-4 md:p-8"
             onClick={() => setFullscreenIndex(null)}
           >
             <button className="absolute top-6 right-6 text-white p-2 hover:bg-white/10 rounded-full transition-colors z-[120]">
               <X size={32} />
             </button>
+
+            {/* Rotation Hint - Only visible on mobile in portrait mode */}
+            <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 text-white/80 md:hidden portrait:flex landscape:hidden z-[120] pointer-events-none animate-pulse">
+              <div className="bg-white/10 backdrop-blur-md p-4 rounded-full border border-white/20">
+                <RotateCw size={24} className="animate-spin-slow" />
+              </div>
+              <p className="text-xs font-bold uppercase tracking-widest text-center bg-black/40 px-4 py-2 rounded-full backdrop-blur-sm">
+                Поверните экран для удобства
+              </p>
+            </div>
             
             <button 
               onClick={prevFullscreen}
-              className="absolute left-4 md:left-10 top-1/2 -translate-y-1/2 p-4 text-white/50 hover:text-white transition-colors z-[120]"
+              className="absolute left-4 md:left-10 top-1/2 -translate-y-1/2 p-4 text-white/50 hover:text-white transition-colors z-[120] hidden md:block"
             >
-              <ChevronLeft size={48} />
+              <ChevronLeft size={64} strokeWidth={1} />
             </button>
             
             <button 
               onClick={nextFullscreen}
-              className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 p-4 text-white/50 hover:text-white transition-colors z-[120]"
+              className="absolute right-4 md:right-10 top-1/2 -translate-y-1/2 p-4 text-white/50 hover:text-white transition-colors z-[120] hidden md:block"
             >
-              <ChevronRight size={48} />
+              <ChevronRight size={64} strokeWidth={1} />
             </button>
 
-            <motion.div
-              key={fullscreenIndex}
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="max-w-full max-h-full flex items-center justify-center"
-            >
-              <img 
-                src={`/${REVIEWS[fullscreenIndex]}otz.jpg`} 
-                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
-                referrerPolicy="no-referrer"
-              />
-            </motion.div>
+            <div className="w-full h-full flex items-center justify-center overflow-hidden">
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={fullscreenIndex}
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  dragElastic={0.2}
+                  onDragEnd={(_, info) => {
+                    if (info.offset.x > 100) prevFullscreen();
+                    else if (info.offset.x < -100) nextFullscreen();
+                  }}
+                  className="w-full h-full flex items-center justify-center"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <img 
+                      src={`${import.meta.env.BASE_URL}${REVIEWS[fullscreenIndex]}otz.jpg`}
+                      className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl pointer-events-none"
+                      referrerPolicy="no-referrer"
+                    />
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -507,18 +699,21 @@ const Reviews = () => {
 
 const Delivery = () => {
   return (
-    <section id="delivery" className="py-12 bg-stone-50/50">
-      <div className="max-w-4xl mx-auto px-4 text-center">
-        <h2 className="font-serif text-3xl md:text-4xl text-stone-800 mb-8">Заказ и доставка</h2>
-        <div className="glass-card p-8 md:p-12 rounded-[40px] shadow-sm border-stone-200/50">
-          <p className="text-stone-700 text-lg leading-relaxed mb-8">
-            Уточнить наличие, стоимость ароматов и сделать заказ Вы можете по указанным ниже контактам.
-          </p>
-          <p className="text-stone-600 leading-relaxed text-sm md:text-base">
+    <section id="delivery" className="py-16 md:py-20 bg-stone-50/50">
+      <div className="max-w-5xl mx-auto px-4 text-center">
+        <h2 className="font-serif text-4xl md:text-5xl text-stone-800 mb-12 md:mb-16 leading-tight">Заказ и доставка</h2>
+        <div className="bg-white/90 backdrop-blur-md p-8 md:p-16 rounded-[40px] md:rounded-[60px] shadow-2xl border border-stone-200">
+          <div className="mb-8 md:mb-12">
+            <p className="text-stone-900 text-2xl md:text-3xl font-black leading-tight mb-6 md:mb-8">
+              Уточнить наличие, стоимость ароматов и сделать заказ Вы можете по указанным ниже контактам.
+            </p>
+            <div className="w-20 md:w-24 h-1.5 bg-amber-200 mx-auto rounded-full" />
+          </div>
+          <p className="text-stone-800 leading-relaxed text-lg md:text-xl font-bold">
             Наша компания международная и охватывает почти все страны мира. Офисы компании присутствуют в большинстве городов России и во всех странах СНГ. Доставка от компании возможна почти по всей России (уточняйте у администраторов). По Москве, Санкт-Петербургу и другим крупным городам России возможна курьерская доставка день в день.
           </p>
         </div>
-        <div className="section-divider" />
+        <div className="section-divider mt-16 md:mt-20" />
       </div>
     </section>
   );
@@ -526,60 +721,62 @@ const Delivery = () => {
 
 const Contacts = () => {
   return (
-    <section id="contacts" className="py-12">
+    <section id="contacts" className="py-16">
       <div className="max-w-7xl mx-auto px-4">
-        <h2 className="font-serif text-3xl md:text-4xl text-stone-800 text-center mb-12">Контакты</h2>
+        <h2 className="font-serif text-4xl md:text-5xl text-stone-800 text-center mb-16">Контакты</h2>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          <div className="space-y-6">
-            <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left p-4 glass-card rounded-2xl">
-              <div className="p-3 bg-emerald-100 text-emerald-600 rounded-xl"><Phone size={24} /></div>
+          <div className="space-y-8">
+            <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left p-6 glass-card rounded-2xl">
+              <div className="p-4 bg-emerald-100 text-emerald-600 rounded-xl scale-110"><Phone size={28} /></div>
               <div>
-                <p className="text-xs text-stone-400 uppercase tracking-widest font-bold">WhatsApp / Телефон</p>
-                <a href="tel:+79936999339" className="text-lg font-bold text-stone-800 hover:text-emerald-600 transition-colors">+7 (993) 699-93-39</a>
+                <p className="text-sm text-stone-400 uppercase tracking-widest font-black mb-1">WhatsApp / Телефон</p>
+                <a href="tel:+79936999339" className="text-xl md:text-2xl font-black text-stone-800 hover:text-emerald-600 transition-colors">+7 (993) 699-93-39</a>
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left p-4 glass-card rounded-2xl">
-              <div className="p-3 bg-blue-100 text-blue-600 rounded-xl"><Send size={24} /></div>
-              <div>
-                <p className="text-xs text-stone-400 uppercase tracking-widest font-bold">Telegram Личный</p>
-                <a href="https://t.me/Naum_SW" target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-stone-800 hover:text-blue-600 transition-colors">@Naum_SW</a>
+            <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left p-6 glass-card rounded-2xl">
+              <div className="p-4 bg-blue-100 text-blue-600 rounded-xl scale-110"><Send size={28} /></div>
+              <div className="flex flex-col items-center md:items-start">
+                <p className="text-sm text-stone-400 uppercase tracking-widest font-black mb-3">Telegram Личный</p>
+                <a href="https://t.me/Naum_SW" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 bg-blue-50 text-blue-600 hover:bg-blue-100 px-6 py-3 rounded-full transition-colors font-black text-lg">
+                  <span>@Naum_SW</span>
+                </a>
               </div>
             </div>
 
-            <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left p-4 glass-card rounded-2xl">
-              <div className="p-3 bg-stone-100 text-stone-600 rounded-xl"><MessageCircle size={24} /></div>
+            <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left p-6 glass-card rounded-2xl">
+              <div className="p-4 bg-stone-100 text-stone-600 rounded-xl scale-110"><MessageCircle size={28} /></div>
               <div>
-                <p className="text-xs text-stone-400 uppercase tracking-widest font-bold">Контакт в Max</p>
-                <a href="tel:+79227485998" className="text-lg font-bold text-stone-800 hover:text-stone-600 transition-colors">+7 (922) 748-59-98</a>
+                <p className="text-sm text-stone-400 uppercase tracking-widest font-black mb-1">Контакт в Max</p>
+                <a href="tel:+79227485998" className="text-xl md:text-2xl font-black text-stone-800 hover:text-stone-600 transition-colors">+7 (922) 748-59-98</a>
               </div>
             </div>
           </div>
 
-          <div className="space-y-6">
-            <div className="p-6 glass-card rounded-3xl border-amber-100">
-              <h4 className="font-bold text-stone-800 mb-4 flex items-center gap-2 justify-center lg:justify-start">
-                <Send className="text-blue-500" size={20} />
+          <div className="space-y-8">
+            <div className="p-8 glass-card rounded-3xl border-amber-100">
+              <h4 className="font-black text-xl text-stone-800 mb-6 flex flex-col lg:flex-row items-center gap-3 justify-center lg:justify-start text-center lg:text-left">
+                <Send className="text-blue-500" size={24} />
                 Наши ресурсы в Telegram
               </h4>
-              <ul className="space-y-4 text-sm text-stone-600 text-center lg:text-left">
+              <ul className="space-y-6 text-base md:text-lg text-stone-600 text-center lg:text-left font-medium">
                 <li>
-                  <p className="font-medium mb-1">Бот-каталог с полным описанием ароматов:</p>
-                  <a href="https://aromo.pro/NNN14_88" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">aromo.pro/NNN14_88</a>
+                  <p className="font-bold mb-2 text-stone-800">Бот-каталог с полным описанием ароматов</p>
+                  <a href="https://aromo.pro/NNN14_88" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all font-bold">aromo.pro/NNN14_88</a>
                 </li>
                 <li>
-                  <p className="font-medium mb-1">Наш чат: отвечаем на ваши вопросы и рассказываем об интересном:</p>
-                  <a href="https://aromo.pro/chat/NNN14_88" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all">aromo.pro/chat/NNN14_88</a>
+                  <p className="font-bold mb-2 text-stone-800">Наш чат: отвечаем на ваши вопросы и рассказываем об интересном</p>
+                  <a href="https://aromo.pro/chat/NNN14_88" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all font-bold">aromo.pro/chat/NNN14_88</a>
                 </li>
               </ul>
             </div>
 
-            <div className="p-6 glass-card rounded-3xl text-center lg:text-left">
-              <p className="text-xs text-stone-400 uppercase tracking-widest mb-2 font-bold">Сотрудничество</p>
-              <p className="text-sm text-stone-600 mb-4">По вопросам сотрудничества обращайтесь в Telegram:</p>
-              <a href="https://t.me/Naum_SW" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-full transition-colors font-medium">
-                <Send size={16} />
+            <div className="p-8 glass-card rounded-3xl text-center lg:text-left">
+              <p className="text-sm text-stone-400 uppercase tracking-widest mb-3 font-black">Сотрудничество</p>
+              <p className="text-base md:text-lg text-stone-600 mb-6 font-medium">По вопросам сотрудничества обращайтесь в Telegram</p>
+              <a href="https://t.me/Naum_SW" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 bg-blue-50 text-blue-600 hover:bg-blue-100 px-6 py-3 rounded-full transition-colors font-black text-lg">
+                <Send size={20} />
                 <span>@Naum_SW</span>
               </a>
             </div>
@@ -595,8 +792,8 @@ const Footer = () => {
     <footer className="py-12 border-t border-stone-200/50 text-center">
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex flex-col items-center gap-4">
-          <img src="/logo.jpg" alt="Logo" className="h-12 w-12 rounded-full opacity-50 grayscale object-cover" referrerPolicy="no-referrer" />
-          <p className="text-stone-400 text-[10px] uppercase tracking-[0.2em]">
+          <img src={`${import.meta.env.BASE_URL}logo.jpg`} alt="Logo" className="h-12 w-12 rounded-full opacity-50 grayscale object-cover" referrerPolicy="no-referrer" />
+          <p className="text-stone-400 text-xs uppercase tracking-[0.2em] font-bold">
             © {new Date().getFullYear()} АРОМА ГИД • ВСЕ ПРАВА ЗАЩИЩЕНЫ
           </p>
         </div>
@@ -608,6 +805,7 @@ const Footer = () => {
 export default function App() {
   return (
     <div className="smooth-scroll">
+      <FastScrollHandle />
       <Navbar />
       <Hero />
       <Features />

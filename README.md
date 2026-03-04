@@ -1,20 +1,43 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# 🌸 АРОМА ГИД — Мир изысканных ароматов
 
-# Run and deploy your AI Studio app
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
+![Vite](https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
+![Framer Motion](https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white)
 
-This contains everything you need to run your app locally.
+Элегантный веб-сайт каталог парфюмерии с адаптивным дизайном, плавными анимациями и интерактивным интерфейсом. Проект создан для демонстрации коллекции ароматов с удобной навигацией и системой отзывов.
 
-View your app in AI Studio: https://ai.studio/apps/bdbee3a3-c648-41ff-a8a3-fc9c7ef797a1
+---
 
-## Run Locally
+## ✨ Особенности
 
-**Prerequisites:**  Node.js
+* **💎 Премиальный дизайн:** Минималистичная эстетика в стиле "Stone & Nature".
+* **📱 Полная адаптивность:** Сайт идеально выглядит на смартфонах, планшетах и десктопах.
+* **🖼️ Интерактивный каталог:** Просмотр карточек товаров с модальными окнами и поддержкой жестов (свайпы).
+* **💬 Система отзывов:** Полноэкранный просмотр отзывов клиентов с возможностью перелистывания.
+* **🚀 Высокая производительность:** Сборка на Vite обеспечивает мгновенную загрузку.
+* **🎭 Плавные анимации:** Использование Framer Motion для переходов и интерактивных элементов.
 
+---
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## 🛠️ Технологический стек
+
+* **Frontend:** React 18.
+* **Сборка:** Vite 6.
+* **Стилизация:** Tailwind CSS.
+* **Анимации:** Motion (Framer Motion).
+* **Иконки:** Lucide React.
+
+---
+
+## 🚀 Быстрый старт
+
+### Предварительные требования
+Убедитесь, что у вас установлен [Node.js](https://nodejs.org/) (рекомендуется версия 18 и выше).
+
+### Установка и запуск
+
+1. **Клонируйте репозиторий:**
+   ```bash
+   git clone [https://github.com/ВАШ_НИК/aromo-gid.git](https://github.com/ВАШ_НИК/aromo-gid.git)
+   cd aromo-gid
