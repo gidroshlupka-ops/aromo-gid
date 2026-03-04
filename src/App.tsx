@@ -778,13 +778,17 @@ const Reviews = () => {
                     <motion.img 
   src={`${import.meta.env.BASE_URL}${REVIEWS[fullscreenIndex]}otz.jpg`}
   className="max-w-full max-h-[85vh] object-contain rounded-lg shadow-2xl"
-  // Заменяем обычный transform на motion-scale
-  animate={{ scale: zoomScale }} 
-  // Включаем перетаскивание, только если картинка увеличена
+  // Добавляем x: 0 и y: 0, когда зум отключен
+  animate={{ 
+    scale: zoomScale,
+    x: isZoomed ? undefined : 0, 
+    y: isZoomed ? undefined : 0 
+  }} 
   drag={isZoomed} 
-  // Ограничиваем, чтобы картинка не улетала слишком далеко за экран
-  dragConstraints={{ left: -200, right: 200, top: -200, bottom: 200 }}
+  // Увеличим ограничения, чтобы можно было свободнее двигать
+  dragConstraints={{ left: -400, right: 400, top: -400, bottom: 400 }}
   dragElastic={0.1}
+  // Добавляем плавность возвращения
   transition={{ type: 'spring', stiffness: 300, damping: 30 }}
   referrerPolicy="no-referrer"
 />
