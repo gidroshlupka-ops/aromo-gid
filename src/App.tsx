@@ -791,8 +791,8 @@ const Contacts = () => {
             <div className="flex flex-col md:flex-row items-center gap-6 text-center md:text-left p-6 glass-card rounded-2xl">
               <div className="p-4 bg-blue-100 text-blue-600 rounded-xl scale-110"><Send size={28} /></div>
               <div className="flex flex-col items-center md:items-start">
-                <p className="text-sm text-stone-400 uppercase tracking-widest font-black mb-3" onClick={() => typeof ym !== 'undefined' && ym(107014178, 'reachGoal', 'tg_personal')}>Telegram Личный</p>
-                <a href="https://t.me/Naum_SW" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 bg-blue-50 text-blue-600 hover:bg-blue-100 px-6 py-3 rounded-full transition-colors font-black text-lg">
+                <p className="text-sm text-stone-400 uppercase tracking-widest font-black mb-3">Telegram Личный</p>
+                <a href="https://t.me/Naum_SW" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 bg-blue-50 text-blue-600 hover:bg-blue-100 px-6 py-3 rounded-full transition-colors font-black text-lg" onClick={() => typeof ym !== 'undefined' && ym(107014178, 'reachGoal', 'tg_personal')}>
                   <span>@Naum_SW</span>
                 </a>
               </div>
