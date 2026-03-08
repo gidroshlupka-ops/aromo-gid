@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
 
   return {
     // 🔥 ВАЖНО: base только для production
-    base: mode === 'production' ? '/aromo-gid/' : '/',
+    base: mode === 'production' ? './' : '/',
 
     plugins: [react(), tailwindcss()],
 
